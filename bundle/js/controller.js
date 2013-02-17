@@ -1,21 +1,8 @@
 (function() {
-  var RELOAD_INTERVAL, guessAtDeviceFamilyBasedOnViewDump,
+  var RELOAD_INTERVAL,
     __slice = [].slice;
 
   RELOAD_INTERVAL = 500;
-
-  guessAtDeviceFamilyBasedOnViewDump = function(viewHier) {
-    switch (viewHier.accessibilityFrame.size.height) {
-      case 1024:
-        return 'ipad';
-      case 480:
-      case 568:
-        return 'iphone';
-      default:
-        console.warn("couldn't recognize device family based on screen height of " + viewHeir.accessibilityFrame.size.height + "px");
-        return 'unknown';
-    }
-  };
 
   define(['frank'], function(frank) {
     var createController;
@@ -117,10 +104,9 @@
       reload = function() {
         var deferable;
         deferable = $.Deferred();
-        $.when(frank.fetchViewHierarchy(), frank.fetchOrientation()).done(function(_arg1, orientation) {
-          var accessibleViews, deviceFamily, rawHier;
+        $.when(frank.fetchViewHierarchy(), frank.fetchOrientation(), frank.fetchDevice()).done(function(_arg1, orientation, deviceFamily) {
+          var accessibleViews, rawHier;
           rawHier = _arg1[0];
-          deviceFamily = guessAtDeviceFamilyBasedOnViewDump(rawHier);
           treeView.model.resetViewHier(rawHier);
           ersatzView.model.resetViews(treeView.model.get('allViews'), deviceFamily, orientation);
           accessibleViews = treeView.model.getAccessibleViews();

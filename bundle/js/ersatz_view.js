@@ -1,5 +1,5 @@
 (function() {
-  var ISO_MAJOR_OFFSET, ISO_MINOR_OFFSET, ISO_SKEW, SCREEN_BOUNDS,
+  var ISO_MAJOR_OFFSET, ISO_MINOR_OFFSET, ISO_SKEW,
     __slice = [].slice;
 
   ISO_SKEW = 15;
@@ -8,35 +8,25 @@
 
   ISO_MINOR_OFFSET = 5;
 
-  SCREEN_BOUNDS = {
-    iphone: {
-      x: 0,
-      y: 0,
-      width: 320,
-      height: 480
-    },
-    ipad: {
-      x: 0,
-      y: 0,
-      width: 768,
-      height: 1024
-    }
-  };
-
   define(['transform_stack', 'ersatz_model'], function(transformStack, ErsatzModel) {
     var ErsatzView, ErsatzViewSnapshotView, drawStaticBackdropAndReturnTransformer, transformFromBaseForViewModel;
-    drawStaticBackdropAndReturnTransformer = function(paper, deviceFamily, orientation, isoSkew) {
-      var isiPhone, rotation, rotationPoint, transformer;
+    drawStaticBackdropAndReturnTransformer = function(paper, resolution, deviceFamily, orientation, isoSkew) {
+      var isiPhone, isiPad, rotation, rotationPoint, transformer;
       paper.clear();
       paper.canvas.setAttribute("width", "100%");
       paper.canvas.setAttribute("height", "100%");
       isiPhone = 'iphone' === deviceFamily;
+      isiPad = 'ipad' == deviceFamily;
       if (isiPhone) {
         paper.canvas.setAttribute("viewBox", "0 0 380 720");
         rotationPoint = [190, 360];
-      } else {
+      } else if (isiPad) {
         paper.canvas.setAttribute("viewBox", "0 0 875 1200");
         rotationPoint = [437, 600];
+      }
+      else
+      {
+        paper.canvas.setAttribute("viewBox", "0 0 " + resolution.width + " " +  resolution.height);
       }
       transformer = transformStack();
       transformer.skew(0, isoSkew).translate(6, 6);
@@ -61,7 +51,7 @@
           stroke: "gray",
           "stroke-width": 4
         }).transform(transformer.desc());
-      } else {
+      } else if (isiPad) {
         paper.rect(10, 10, 855, 1110, 20).attr({
           'fill': 'black',
           'stroke': 'gray',
@@ -76,9 +66,10 @@
           "stroke-width": 2
         }).transform(transformer.push().translate(-11, -11).descAndPop());
         transformer.translate(20, 120);
-      } else {
+      } else if (isiPad) {
         transformer.translate(50, 50);
       }
+
       if (isoSkew > 0) {
         transformer.translate(-ISO_MAJOR_OFFSET, 0);
       }
@@ -137,7 +128,7 @@
         var isoSkew;
         this.highlights = [];
         isoSkew = (this.model.get('isAsploded') ? ISO_SKEW : 0);
-        this.backdropTransformer = drawStaticBackdropAndReturnTransformer(this.paper, this.model.get('deviceFamily'), this.model.get('orientation'), isoSkew);
+        this.backdropTransformer = drawStaticBackdropAndReturnTransformer(this.paper, this.model.get('resolution'), this.model.get('deviceFamily'), this.model.get('orientation'), isoSkew);
         this.backdrop = this.paper.image();
         this.refreshBaseScreenshot();
         if (this.model.get('isAsploded')) {
@@ -147,7 +138,13 @@
         return this.el;
       },
       screenBounds: function() {
-        return SCREEN_BOUNDS[this.model.get('deviceFamily')];
+        resolution = this.model.get('resolution');
+        return {
+          x: 0,
+          y: 0,
+          width: resolution.width,
+          height: resolution.height
+        };
       },
       refreshBaseScreenshot: function() {
         var newScreenshotUrl;

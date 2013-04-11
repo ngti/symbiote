@@ -104,11 +104,11 @@
       reload = function() {
         var deferable;
         deferable = $.Deferred();
-        $.when(frank.fetchViewHierarchy(), frank.fetchOrientation(), frank.fetchDevice()).done(function(_arg1, orientation, deviceFamily) {
+        $.when(frank.fetchViewHierarchy(), frank.fetchResolution(), frank.fetchOrientation(), frank.fetchDevice()).done(function(_arg1, resolution, orientation, deviceFamily) {
           var accessibleViews, rawHier;
           rawHier = _arg1[0];
           treeView.model.resetViewHier(rawHier);
-          ersatzView.model.resetViews(treeView.model.get('allViews'), deviceFamily, orientation);
+          ersatzView.model.resetViews(treeView.model.get('allViews'), resolution, deviceFamily, orientation);
           accessibleViews = treeView.model.getAccessibleViews();
           accessibleViewsView.collection.reset(accessibleViews);
           ersatzView.render();

@@ -18,11 +18,15 @@
       isiPhone = 'iphone' === deviceFamily;
       isiPad = 'ipad' == deviceFamily;
       if (isiPhone) {
-        paper.canvas.setAttribute("viewBox", "0 0 380 720");
-        rotationPoint = [190, 360];
+        width = resolution.width + 60;
+        height = resolution.height + 240;
+        paper.canvas.setAttribute("viewBox", "0 0 " + width + " " + height);
+        rotationPoint = [width / 2, height / 2];
       } else if (isiPad) {
-        paper.canvas.setAttribute("viewBox", "0 0 875 1200");
-        rotationPoint = [437, 600];
+        width = resolution.width + 108;
+        height = resolution.height + 176;
+        paper.canvas.setAttribute("viewBox", "0 0 " + width + " " + height);
+        rotationPoint = [width / 2, height / 2];
       }
       else
       {
@@ -46,20 +50,26 @@
         transformer.rotateAroundPoint.apply(transformer, [rotation].concat(__slice.call(rotationPoint)));
       }
       if (isiPhone) {
-        paper.rect(0, 0, 360, 708, 40).attr({
+        width = resolution.width + 40;
+        height = resolution.height + 228;
+        paper.rect(0, 0, width, height, 40).attr({
           fill: "black",
           stroke: "gray",
           "stroke-width": 4
         }).transform(transformer.desc());
       } else if (isiPad) {
-        paper.rect(10, 10, 855, 1110, 20).attr({
+        width = resolution.width + 108;
+        height = resolution.height + 86;
+        paper.rect(10, 10, width, height, 20).attr({
           'fill': 'black',
           'stroke': 'gray',
           'stroke-width': 6
         }).transform(transformer.desc());
       }
       if (isiPhone) {
-        transformer.push().translate(180, 655);
+        x = resolution.width / 2 + 20;
+        y = resolution.height + 175;
+        transformer.push().translate(x, y);
         paper.circle(0, 0, 34).transform(transformer.desc()).attr("fill", "90-#303030-#101010");
         paper.rect(0, 0, 22, 22, 5).attr({
           stroke: "gray",

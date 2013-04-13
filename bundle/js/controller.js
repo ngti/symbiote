@@ -107,6 +107,9 @@
         $.when(frank.fetchViewHierarchy(), frank.fetchResolution(), frank.fetchOrientation(), frank.fetchDevice()).done(function(_arg1, resolution, orientation, deviceFamily) {
           var accessibleViews, rawHier;
           rawHier = _arg1[0];
+          if (deviceFamily == 'mac') {
+            $liveButton.hide();
+          }
           treeView.model.resetViewHier(rawHier);
           ersatzView.model.resetViews(treeView.model.get('allViews'), resolution, deviceFamily, orientation);
           accessibleViews = treeView.model.getAccessibleViews();

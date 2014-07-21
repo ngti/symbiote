@@ -22,7 +22,7 @@
     return request = $.ajax({
       type: "POST",
       dataType: "json",
-      url: baseUrlFor("/dump")
+      url: baseUrlFor("/dump/allwindows")
     });
   };
 
